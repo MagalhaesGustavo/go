@@ -91,7 +91,10 @@ func cotacaoDolar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = db.Exec("INSERT INTO cotacao (bid) VALUES (?)", data.Usdbrl.Bid)
+	ctxDB, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	_, err = db.ExecContext(ctxDB,"INSERT INTO cotacao (bid) VALUES (?)", data.Usdbrl.Bid)
 	if err != nil {
 		log.Println(err)
 		return
